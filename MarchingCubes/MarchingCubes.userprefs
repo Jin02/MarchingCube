@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\OcTree.cs">
+    <Files>
+      <File FileName="Assets\MarchingTetrahedra.cs" Line="28" Column="31" />
+      <File FileName="Assets\OcTreeTest.cs" Line="8" Column="6" />
+      <File FileName="Assets\OcTree.cs" Line="82" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\lg\Desktop\MarchingCubes 2\MarchingCubes\Assets\OcTreeTest.cs" line="8" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
