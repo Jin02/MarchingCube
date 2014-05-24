@@ -41,7 +41,6 @@ public class OcTree
             childs[i] = null;
             corners[i] = 0;
         }
-
         depth = parent.depth + 1;
     }
 
@@ -60,15 +59,15 @@ public class OcTree
 
         depth = 0;
 
-        Debug.Log("depth : " + (depth) + " "
-            + "/ FTL " + corners[(int)Direction.FrontTopLeft]
-            + "/ FTR " + corners[(int)Direction.FrontTopRight]
-            + "/ BTL " + corners[(int)Direction.BackTopLeft]
-            + "/ BTR " + corners[(int)Direction.BackTopRight]
-            + "/ FBL " + corners[(int)Direction.FrontBottomLeft]
-            + "/ FBR " + corners[(int)Direction.FrontBottomRight]
-            + "/ BBL " + corners[(int)Direction.BackBottomLeft]
-            + "/ BBR " + corners[(int)Direction.BackBottomRight]);
+        //Debug.Log("depth : " + (depth) + " "
+        //    + "/ FTL " + corners[(int)Direction.FrontTopLeft]
+        //    + "/ FTR " + corners[(int)Direction.FrontTopRight]
+        //    + "/ BTL " + corners[(int)Direction.BackTopLeft]
+        //    + "/ BTR " + corners[(int)Direction.BackTopRight]
+        //    + "/ FBL " + corners[(int)Direction.FrontBottomLeft]
+        //    + "/ FBR " + corners[(int)Direction.FrontBottomRight]
+        //    + "/ BBL " + corners[(int)Direction.BackBottomLeft]
+        //    + "/ BBR " + corners[(int)Direction.BackBottomRight]);
 
         this.bounds = bounds;
     }
@@ -110,17 +109,17 @@ public class OcTree
 
         child.bounds = CalcBounds(direction);
 
-        Debug.Log("depth : " + (depth+1) + " "
-            + "/ " + direction            
-            + "/ FTL " + child.corners[(int)Direction.FrontTopLeft]
-            + "/ FTR " + child.corners[(int)Direction.FrontTopRight]
-            + "/ BTL " + child.corners[(int)Direction.BackTopLeft]
-            + "/ BTR " + child.corners[(int)Direction.BackTopRight]
-            + "/ FBL " + child.corners[(int)Direction.FrontBottomLeft]
-            + "/ FBR " + child.corners[(int)Direction.FrontBottomRight]
-            + "/ BBL " + child.corners[(int)Direction.BackBottomLeft]
-            + "/ BBR " + child.corners[(int)Direction.BackBottomRight]);
-
+        //Debug.Log("depth : " + (depth+1) + " "
+        //    + "/ " + direction            
+        //    + "/ FTL " + child.corners[(int)Direction.FrontTopLeft]
+        //    + "/ FTR " + child.corners[(int)Direction.FrontTopRight]
+        //    + "/ BTL " + child.corners[(int)Direction.BackTopLeft]
+        //    + "/ BTR " + child.corners[(int)Direction.BackTopRight]
+        //    + "/ FBL " + child.corners[(int)Direction.FrontBottomLeft]
+        //    + "/ FBR " + child.corners[(int)Direction.FrontBottomRight]
+        //    + "/ BBL " + child.corners[(int)Direction.BackBottomLeft]
+        //    + "/ BBR " + child.corners[(int)Direction.BackBottomRight]);
+        Debug.Log("depth : " + (depth + 1) + " " + "/ " + direction + " / " + child.bounds.center);
 
         return child;
     }
@@ -128,14 +127,14 @@ public class OcTree
     private Bounds CalcBounds(Direction dir)
     {
         Bounds bounds = new Bounds();
-        bounds.size = bounds.size / 2.0f;
+        bounds.size = this.bounds.size / 2.0f;
 
-        Vector3 offset = bounds.center - bounds.size / 4.0f;
+        Vector3 offset = this.bounds.center - this.bounds.size / 4.0f;
         offset.x = Mathf.Abs(offset.x);
         offset.y = Mathf.Abs(offset.y);
         offset.z = Mathf.Abs(offset.z);
 
-        Vector3 childCenter = bounds.center;
+        Vector3 childCenter = this.bounds.center;
         Vector3 d = Vector3.zero;
 
         //FrontTopLeft = 0, FrontTopRight, BackTopLeft, BackTopRight,
@@ -156,6 +155,8 @@ public class OcTree
         childCenter.x += d.x * offset.x;
         childCenter.y += d.y * offset.y;
         childCenter.z += d.z * offset.z;
+
+        //Debug.Log("depth : " + (depth + 1) + " / " + dir + "  //  " + d + "offset : " + offset + "cc : " + childCenter +"parent bounds " + bounds);
 
         bounds.center = childCenter;
 
