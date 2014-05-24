@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\MarchingCubes.cs" />
-     <Compile Include="Assets\MarchingTetrahedra.cs" />
      <Compile Include="Assets\OcTree.cs" />
      <Compile Include="Assets\OcTreeTest.cs" />
      <Compile Include="Assets\PerlinNoise.cs" />
