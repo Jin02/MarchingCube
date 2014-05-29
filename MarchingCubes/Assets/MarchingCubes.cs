@@ -28,7 +28,7 @@ public class MarchingCubes
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertexs.ToArray();
-        Debug.Log("Marching Cube Geometry Info : " + " VertexNum: " + vertexs.Count + " indexNum:" + indices.Count);
+//        Debug.Log("Marching Cube Geometry Info : " + " VertexNum: " + vertexs.Count + " indexNum:" + indices.Count);
         mesh.triangles = indices.ToArray();
 
         return mesh;
@@ -67,8 +67,26 @@ public class MarchingCubes
 
                     int edgeFlags = cubeEdgeFlags[flagIndex];
 
+					if( x == 2 && y == 2 && z == 2 || 
+					    x == 2 && y == 2 && z == 3 ||
+				 	    x == 2 && y == 2 && z == 4 ||
+					    x == 2 && y == 3 && z == 2 ||
+					    x == 2 && y == 3 && z == 3 ||
+					    x == 2 && y == 3 && z == 4 ||
+					    x == 2 && y == 4 && z == 2 ||
+					    x == 2 && y == 4 && z == 3 ||
+					    x == 2 && y == 4 && z == 4 
+					   )
+					{
+						//Debug.Log("x :"+x+" y : "+y+ " z : "+z+"  edgeFlag : "+edgeFlags);
+					}
+
+//					Debug.Log("x :"+x+" y : "+y+ " z : "+z+"  edgeFlag : "+edgeFlags);
+
                     if (edgeFlags == 0)
                         continue;
+
+
 
                     for (int i = 0; i < 12; i++)
                     {
@@ -86,6 +104,9 @@ public class MarchingCubes
 								+ (vertexOffset[edgeConnection[i, 0], 2] + offsetInCube * edgeDirection[i, 2]);
                         }
                     }
+
+//					if (triangleConnectionTable[flagIndex, 3] >= 0)
+//						Debug.Log("x :"+x+" y : "+y+ " z : "+z+"  edgeFlag : "+edgeFlags);
 
                     for (int i = 0; i < 5; i++)
                     {
@@ -110,13 +131,19 @@ public class MarchingCubes
                                 int beforeIdx = (int)hash[hashCode];
 								indexList.Add(beforeIdx);
                             }
+
+							if(x == 1 && y == 1 && z == 2)
+							{
+								//Debug.Log(p);
+							}
+
                         }
                     }
                 }
             }
         }
 
-		Debug.Log (hash.Count);
+//		Debug.Log (hash.Count);
 
     }
 
@@ -131,7 +158,17 @@ public class MarchingCubes
     static void FillCube(int x, int y, int z, float[, ,] voxels, ref float[] cube)
     {
         for (int i = 0; i < 8; i++)
-            cube[i] = voxels[x + vertexOffset[i, 0], y + vertexOffset[i, 1], z + vertexOffset[i, 2]];
+		{
+			int _x = x + vertexOffset [i, 0];
+			int _y = y + vertexOffset [i, 1];
+			int _z = z + vertexOffset [i, 2];
+			cube [i] = voxels [_x, _y, _z];
+
+			if(x == 2 && y == 2 && z == 2)
+			{
+				//Debug.Log("x : "+_x+" y : "+_y+" z : "+_z);
+			}
+		}
     }
 
     float GetOffset(float v1, float v2)

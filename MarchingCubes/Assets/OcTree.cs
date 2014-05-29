@@ -119,7 +119,7 @@ public class OcTree
         //    + "/ FBR " + child.corners[(int)Direction.FrontBottomRight]
         //    + "/ BBL " + child.corners[(int)Direction.BackBottomLeft]
         //    + "/ BBR " + child.corners[(int)Direction.BackBottomRight]);
-        Debug.Log("depth : " + (depth + 1) + " " + "/ " + direction + " / " + child.bounds.center);
+        //Debug.Log("depth : " + (depth + 1) + " " + "/ " + direction + " / " + child.bounds.center);
 
         return child;
     }
