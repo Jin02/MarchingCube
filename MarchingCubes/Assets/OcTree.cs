@@ -212,4 +212,48 @@ public class OcTree
 
         return true;
     }
+
+	public bool find(Ray ray)
+	{
+		bool find = false;
+		if (bounds.IntersectRay (ray))
+		{
+			if(isMinimum)
+			{
+				find = true;
+			}
+			else
+			{
+				for(int i=0; i<8; ++i)
+				{
+					find = childs[i].find(ray);
+				}
+			}
+
+			Debug.Log(bounds + "  /  isMinimum  " + isMinimum + "  corners " +
+			          "FTL " +corners[0] + " / "+ 
+			          "FTR " +corners[1] + " / "+ 
+			          "BTL " +corners[2] + " / "+ 
+			          "BTR " +corners[3] + " / "+
+			          "FBL " +corners[4] + " / "+ 
+			          "FBR " +corners[5] + " / "+ 
+			          "BBL " +corners[6] + " / "+ 
+			          "BBR " +corners[7] + " / ");
+		}
+		else
+		{
+//			if(isMinimum)
+//				Debug.Log(bounds + "  /  isMinimum  " + isMinimum + "  corners " +
+//				          "FTL " +corners[0] + " / "+ 
+//				          "FTR " +corners[1] + " / "+ 
+//				          "BTL " +corners[2] + " / "+ 
+//				          "BTR " +corners[3] + " / "+
+//				          "FBL " +corners[4] + " / "+ 
+//				          "FBR " +corners[5] + " / "+ 
+//				          "BBL " +corners[6] + " / "+ 
+//				          "BBR " +corners[7] + " / ");
+		}
+
+		return find;
+	}
 }

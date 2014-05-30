@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OcTreeTest : MonoBehaviour {
+public class OcTreeTest : MonoBehaviour
+{
 
 	void Start ()
     {

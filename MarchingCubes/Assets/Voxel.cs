@@ -4,13 +4,16 @@ using System.Collections;
 public class Voxel : MonoBehaviour
 {
     public Material material;
-	public Material depthMaterial;
 
     public int width = 32;
     public int height = 32;
     public int length = 32;
 
     public float radius = 16.0f;
+
+	public Vector3 scale = new Vector3 (1, 1, 1);
+
+	OcTree octree;	
 
     void Start()
     {
@@ -54,16 +57,29 @@ public class Voxel : MonoBehaviour
         child.AddComponent<MeshRenderer>();
 		child.renderer.materials = new Material[]
 		{
-			depthMaterial, material
+			material
 		};
         child.GetComponent<MeshFilter>().mesh = cubeMesh;
         child.transform.parent = this.transform;
-//		child.transform.localScale = new Vector3 (10, 10, 10);
+
+		octree = new OcTree (width - 2, height - 2, length - 2, 
+		                     new Bounds (Vector3.zero, 
+		            					 new Vector3 ((float)(width-2)*scale.x, 
+		             								  (float)(height-2)*scale.y,
+		             								  (float)(length-2)*scale.z)
+		            ));
+
+		octree.Build ();
+
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-
+		if (Input.GetMouseButtonDown (0))
+		{
+//			Debug.Log(Input.mousePosition);
+			octree.find( Camera.main.ScreenPointToRay(Input.mousePosition) );
+		}
     }
 }
