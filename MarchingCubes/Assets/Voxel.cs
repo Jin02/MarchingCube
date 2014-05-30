@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Voxel : MonoBehaviour
 {
@@ -14,15 +15,18 @@ public class Voxel : MonoBehaviour
 	public Vector3 scale = new Vector3 (1, 1, 1);
 
 	OcTree octree;	
+	MarchingCubes generator;
+	float[, ,] voxelData;
+
+	int _w, _h, _l;
 
     void Start()
     {
-		MarchingCubes generator = new MarchingCubes();
+		generator = new MarchingCubes();
 //		MarchingTetrahedra generator = new MarchingTetrahedra();
 
 		generator.densityTarget = 0.0f;
-
-        float[, ,] voxelData = new float[width, height, length];
+		voxelData = new float[width, height, length];
 
         for (int x = 0; x < width; x++)
         {
@@ -62,24 +66,86 @@ public class Voxel : MonoBehaviour
         child.GetComponent<MeshFilter>().mesh = cubeMesh;
         child.transform.parent = this.transform;
 
-		octree = new OcTree (width - 2, height - 2, length - 2, 
+		_w = width;
+		_h = height;
+		_l = length;
+		octree = new OcTree (_w, _h, _l, 
 		                     new Bounds (Vector3.zero, 
-		            					 new Vector3 ((float)(width-2)*scale.x, 
-		             								  (float)(height-2)*scale.y,
-		             								  (float)(length-2)*scale.z)
+		            					 new Vector3 ((float)(_w)*scale.x, 
+		             								  (float)(_h)*scale.y,
+		             								  (float)(_l)*scale.z)
 		            ));
 
 		octree.Build ();
 
     }
 
-
+	public Object cubeObj;
+	public GameObject temp;
+	
     void Update()
     {
+		if (Input.GetMouseButtonDown (1))
+		{
+			foreach(Transform child in temp.transform)
+			{
+				Destroy(child.gameObject);
+			}
+		}
 		if (Input.GetMouseButtonDown (0))
 		{
 //			Debug.Log(Input.mousePosition);
-			octree.find( Camera.main.ScreenPointToRay(Input.mousePosition) );
+			List<OcTree> nodeList = new List<OcTree>();
+			List<float> dist = new List<float>();
+			octree.find( Camera.main.ScreenPointToRay(Input.mousePosition), ref nodeList, ref dist, _w, _h, _l );
+
+			int si = 0;
+			float sd = 1000000000;
+			int count = dist.Count;
+			bool find = false;
+			for(int i=0; i<count; ++i)
+			{
+				if(sd > dist[i])
+				{
+					sd = dist[i];
+					si = i;
+					find = true;
+				}
+			}
+
+			Debug.Log("si : "+si+" sd : "+sd);
+
+//			int x, y, z;
+//			OcTree.Calc3rdDimIdx(idxs[si], 4, 4, 4, out x, out y, out z);
+//
+//			List<Vector3> lists = new List<Vector3>();
+//			generator.Test(x,y,z, new Vector3 ((float)width / 2.0f, (float)height / 2.0f, (float)length / 2.0f), voxelData, lists);
+//
+//			for(int i=0; i<lists.Count; ++i)
+//			{
+//				GameObject newObj = Instantiate(cubeObj) as GameObject;
+//				newObj.transform.localPosition = lists[i];
+//				newObj.transform.parent = temp.transform;
+//			}
+
+			if( find == false )
+				return;
+
+			for(int i=0; i<8; ++i)
+			{
+				int x, y, z;
+				OcTree.Calc3rdDimIdx(nodeList[si].corner[i], _w, _h, _l, out x, out y, out z);
+				
+				List<Vector3> lists = new List<Vector3>();
+				generator.Test(x,y,z, new Vector3 ((float)width / 2.0f, (float)height / 2.0f, (float)length / 2.0f), voxelData, lists);
+				
+				for(int h=0; h<lists.Count; ++h)
+				{
+					GameObject newObj = Instantiate(cubeObj) as GameObject;
+					newObj.transform.localPosition = lists[h];
+					newObj.transform.parent = temp.transform;
+				}
+			}
 		}
     }
 }

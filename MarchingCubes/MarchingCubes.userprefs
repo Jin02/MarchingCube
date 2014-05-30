@@ -1,14 +1,18 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Depth.shader">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/OcTree.cs">
     <Files>
-      <File FileName="Assets/Depth.shader" Line="28" Column="5" />
-      <File FileName="Assets/MarchingCubes.cs" Line="1" Column="1" />
-      <File FileName="Assets/OcTree.cs" Line="1" Column="1" />
-      <File FileName="Assets/Voxel.cs" Line="14" Column="1" />
-      <File FileName="Assets/GetDepthBuffer.cs" Line="16" Column="65" />
-      <File FileName="Assets/DepthTex.shader" Line="328" Column="2" />
+      <File FileName="Assets/OcTree.cs" Line="247" Column="5" />
+      <File FileName="Assets/Voxel.cs" Line="79" Column="32" />
     </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>this.bounds</Value>
+          <Value>this</Value>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
