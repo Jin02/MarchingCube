@@ -4,18 +4,18 @@ using System.Collections.Generic;
 
 public class MarchingCubes
 {
-    public float    densityTarget
+    public float densityTarget
     {
-        set
+        get
         {
-            _target = value;
+            return target;
         }
     }
-    private float   _target;
+    private float target;
 
-    public MarchingCubes()
+    public MarchingCubes(float densityTarget)
     {
-        _target = 0.0f;
+        target = 0.0f;
     }
 
     public Mesh CreateMesh(float[, ,] densitys, Vector3 offset)
@@ -27,7 +27,6 @@ public class MarchingCubes
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertexs.ToArray();
-//        Debug.Log("Marching Cube Geometry Info : " + " VertexNum: " + vertexs.Count + " indexNum:" + indices.Count);
         mesh.triangles = indices.ToArray();
 
         return mesh;
@@ -59,7 +58,7 @@ public class MarchingCubes
 
                     for (int i = 0; i < 8; i++)
                     {
-                        if (cube[i] > _target)
+                        if (cube[i] > target)
                             flagIndex |= 1 << i;
                     }
 
@@ -74,14 +73,14 @@ public class MarchingCubes
                         {
                             float offsetInCube = GetOffset(cube[edgeConnection[i, 0]], cube[edgeConnection[i, 1]]);
 
-							edgeVertex[i].x = (float)x - offset.x 
-								+ (vertexOffset[edgeConnection[i, 0], 0] + offsetInCube * edgeDirection[i, 0]);
+                            edgeVertex[i].x = (float)x - offset.x
+                                + (vertexOffset[edgeConnection[i, 0], 0] + offsetInCube * edgeDirection[i, 0]);
 
-							edgeVertex[i].y = (float)y - offset.y 
-								+ (vertexOffset[edgeConnection[i, 0], 1] + offsetInCube * edgeDirection[i, 1]);
+                            edgeVertex[i].y = (float)y - offset.y
+                                + (vertexOffset[edgeConnection[i, 0], 1] + offsetInCube * edgeDirection[i, 1]);
 
-							edgeVertex[i].z = (float)z - offset.z 
-								+ (vertexOffset[edgeConnection[i, 0], 2] + offsetInCube * edgeDirection[i, 2]);
+                            edgeVertex[i].z = (float)z - offset.z
+                                + (vertexOffset[edgeConnection[i, 0], 2] + offsetInCube * edgeDirection[i, 2]);
                         }
                     }
 
@@ -95,7 +94,7 @@ public class MarchingCubes
                             int vertexIndex = triangleConnectionTable[flagIndex, 3 * i + j];
 
                             Vector3 p = edgeVertex[vertexIndex];
-							System.Int64 hashCode = CalcHash(p);
+                            System.Int64 hashCode = CalcHash(p);
 
                             if (hash.ContainsKey(hashCode) == false)
                             {
@@ -106,72 +105,64 @@ public class MarchingCubes
                             else
                             {
                                 int beforeIdx = (int)hash[hashCode];
-								indexList.Add(beforeIdx);
+                                indexList.Add(beforeIdx);
                             }
-
-							if(x == 1 && y == 2 && z == 2)
-							{
-//								Debug.Log(p);
-							}
 
                         }
                     }
                 }
             }
         }
-
-//		Debug.Log (hash.Count);
-
     }
-	
-	public void Test(int x, int y, int z, Vector3 offset, float[,,] densitys, List<Vector3> lists)
-	{
-		float[] cube = new float[8];
-		FillCube(x, y, z, densitys, ref cube);
-		int flagIndex = 0;
 
-		for (int i = 0; i < 8; i++)
-		{
-			if (cube[i] > _target)
-				flagIndex |= 1 << i;
-		}
-		
-		int edgeFlags = cubeEdgeFlags[flagIndex];
-		if (edgeFlags == 0) return;
+    public void Test(int x, int y, int z, Vector3 offset, float[, ,] densitys, List<Vector3> lists)
+    {
+        float[] cube = new float[8];
+        FillCube(x, y, z, densitys, ref cube);
+        int flagIndex = 0;
 
-		Vector3[] edgeVertex = new Vector3[12];
+        for (int i = 0; i < 8; i++)
+        {
+            if (cube[i] > target)
+                flagIndex |= 1 << i;
+        }
 
-		for (int i = 0; i < 12; i++)
-		{
-			if ((edgeFlags & (1 << i)) != 0)
-			{
-				float offsetInCube = GetOffset(cube[edgeConnection[i, 0]], cube[edgeConnection[i, 1]]);
-				
-				edgeVertex[i].x = (float)x - offset.x 
-					+ (vertexOffset[edgeConnection[i, 0], 0] + offsetInCube * edgeDirection[i, 0]);
-				
-				edgeVertex[i].y = (float)y - offset.y 
-					+ (vertexOffset[edgeConnection[i, 0], 1] + offsetInCube * edgeDirection[i, 1]);
-				
-				edgeVertex[i].z = (float)z - offset.z 
-					+ (vertexOffset[edgeConnection[i, 0], 2] + offsetInCube * edgeDirection[i, 2]);
-			}
-		}
+        int edgeFlags = cubeEdgeFlags[flagIndex];
+        if (edgeFlags == 0) return;
+
+        Vector3[] edgeVertex = new Vector3[12];
+
+        for (int i = 0; i < 12; i++)
+        {
+            if ((edgeFlags & (1 << i)) != 0)
+            {
+                float offsetInCube = GetOffset(cube[edgeConnection[i, 0]], cube[edgeConnection[i, 1]]);
+
+                edgeVertex[i].x = (float)x - offset.x
+                    + (vertexOffset[edgeConnection[i, 0], 0] + offsetInCube * edgeDirection[i, 0]);
+
+                edgeVertex[i].y = (float)y - offset.y
+                    + (vertexOffset[edgeConnection[i, 0], 1] + offsetInCube * edgeDirection[i, 1]);
+
+                edgeVertex[i].z = (float)z - offset.z
+                    + (vertexOffset[edgeConnection[i, 0], 2] + offsetInCube * edgeDirection[i, 2]);
+            }
+        }
 
 
-		for (int i = 0; i < 5; i++)
-		{
-			if (triangleConnectionTable [flagIndex, 3 * i] < 0)
-					break;
-			
-			for (int j = 0; j < 3; j++)
-			{
-				int vertexIndex = triangleConnectionTable [flagIndex, 3 * i + j];
-				Vector3 p = edgeVertex[vertexIndex];
-				lists.Add(p);
-			}
-		}
-	}
+        for (int i = 0; i < 5; i++)
+        {
+            if (triangleConnectionTable[flagIndex, 3 * i] < 0)
+                break;
+
+            for (int j = 0; j < 3; j++)
+            {
+                int vertexIndex = triangleConnectionTable[flagIndex, 3 * i + j];
+                Vector3 p = edgeVertex[vertexIndex];
+                lists.Add(p);
+            }
+        }
+    }
 
     System.Int64 CalcHash(Vector3 v)
     {
@@ -183,73 +174,25 @@ public class MarchingCubes
 
     static void FillCube(int x, int y, int z, float[, ,] voxels, ref float[] cube)
     {
-		if (x >= ( voxels.GetLength(0)-1 ) ||
-		    y >= ( voxels.GetLength(1)-1 ) ||
-		    z >= ( voxels.GetLength(2)-1 ) )
-			return;
+        if (x >= (voxels.GetLength(0) - 1) ||
+            y >= (voxels.GetLength(1) - 1) ||
+            z >= (voxels.GetLength(2) - 1))
+            return;
 
         for (int i = 0; i < 8; i++)
-		{
-			int _x = x + vertexOffset [i, 0];
-			int _y = y + vertexOffset [i, 1];
-			int _z = z + vertexOffset [i, 2];
+        {
+            int _x = x + vertexOffset[i, 0];
+            int _y = y + vertexOffset[i, 1];
+            int _z = z + vertexOffset[i, 2];
 
-			cube [i] = voxels [_x, _y, _z];
-		}
+            cube[i] = voxels[_x, _y, _z];
+        }
     }
 
     float GetOffset(float v1, float v2)
     {
         float delta = v2 - v1;
-        return (delta == 0.0f) ? 0.5f : (_target - v1) / delta;
-    }
-
-    void MarchCube(Vector3 pos, float[] cube, List<Vector3> vertList, List<int> indexList)
-    {
-        int i, j, vert, idx;
-        int flagIndex = 0;
-        float offset = 0.0f;
-
-        Vector3[] edgeVertex = new Vector3[12];
-
-        //Find which vertices are inside of the surface and which are outside
-        for (i = 0; i < 8; i++)
-        {
-            if (cube[i] > _target)
-                flagIndex |= 1 << i;
-        }
-        //Debug.Log(flagIndex);
-
-        int edgeFlags = cubeEdgeFlags[flagIndex];
-
-        if (edgeFlags == 0) return;
-
-        for (i = 0; i < 12; i++)
-        {
-            if ((edgeFlags & (1 << i)) != 0)
-            {
-                offset = GetOffset(cube[edgeConnection[i, 0]], cube[edgeConnection[i, 1]]);
-
-                edgeVertex[i].x = pos.x + (vertexOffset[edgeConnection[i, 0], 0] + offset * edgeDirection[i, 0]);
-                edgeVertex[i].y = pos.y + (vertexOffset[edgeConnection[i, 0], 1] + offset * edgeDirection[i, 1]);
-                edgeVertex[i].z = pos.z + (vertexOffset[edgeConnection[i, 0], 2] + offset * edgeDirection[i, 2]);
-            }
-        }
-
-        for (i = 0; i < 5; i++)
-        {
-            if (triangleConnectionTable[flagIndex, 3 * i] < 0)
-                break;
-
-            idx = indexList.Count;
-
-            for (j = 0; j < 3; j++)
-            {
-                vert = triangleConnectionTable[flagIndex, 3 * i + j];
-                indexList.Add(idx + j);
-                vertList.Add(edgeVertex[vert]);
-            }
-        }
+        return (delta == 0.0f) ? 0.5f : (target - v1) / delta;
     }
 
     static int[,] vertexOffset = new int[,]
