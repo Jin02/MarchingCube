@@ -18,8 +18,6 @@ public class Voxel : MonoBehaviour
     MarchingCubes generator;
     float[, ,] voxelData;
 
-    int _w, _h, _l;
-
     void Start()
     {
         generator = new MarchingCubes(0.0f);
@@ -36,9 +34,6 @@ public class Voxel : MonoBehaviour
                     float _z = (float)z - (float)length / 2.0f;
 
                     voxelData[x, y, z] = _x * _x + _y * _y + _z * _z - radius * radius;
-                    float _maxXY = Mathf.Max(_x * _x - 1, _y * _y - 1);
-                    float _maxXYZ = Mathf.Max(_maxXY, _z * _z - 1);
-                    //voxelData[x, y, z] = _maxXYZ;
                 }
             }
         }
@@ -57,14 +52,11 @@ public class Voxel : MonoBehaviour
         child.GetComponent<MeshFilter>().mesh = cubeMesh;
         child.transform.parent = this.transform;
 
-        _w = width;
-        _h = height;
-        _l = length;
-        octree = new OcTree(_w, _h, _l,
+        octree = new OcTree(width, height, length,
                              new Bounds(Vector3.zero,
-                                         new Vector3((float)(_w) * scale.x,
-                                                      (float)(_h) * scale.y,
-                                                      (float)(_l) * scale.z)
+                                         new Vector3((float)(width) * scale.x,
+                                                      (float)(height) * scale.y,
+                                                      (float)(length) * scale.z)
                     ));
 
         octree.Build();
@@ -87,7 +79,7 @@ public class Voxel : MonoBehaviour
         {
             List<OcTree> nodeList = new List<OcTree>();
             List<float> dist = new List<float>();
-            octree.find(Camera.main.ScreenPointToRay(Input.mousePosition), ref nodeList, ref dist, _w, _h, _l, voxelData);
+            octree.find(Camera.main.ScreenPointToRay(Input.mousePosition), ref nodeList, ref dist, width, height, length, voxelData);
 
             int si = 0;
             float sd = 1000000000;
@@ -100,7 +92,7 @@ public class Voxel : MonoBehaviour
                     for (int j = 0; j < 8; ++j)
                     {
                         int x, y, z;
-                        OcTree.Calc3rdDimIdx(nodeList[i].corners[j], _w, _h, _l, out x, out y, out z);
+                        OcTree.Calc3rdDimIdx(nodeList[i].corners[j], width, height, length, out x, out y, out z);
                         if (voxelData[x, y, z] < generator.densityTarget)
                         {
                             sd = dist[i];
@@ -118,7 +110,7 @@ public class Voxel : MonoBehaviour
             for (int i = 0; i < 8; ++i)
             {
                 int x, y, z;
-                OcTree.Calc3rdDimIdx(nodeList[si].corners[i], _w, _h, _l, out x, out y, out z);
+                OcTree.Calc3rdDimIdx(nodeList[si].corners[i], width, height, length, out x, out y, out z);
 
                 List<Vector3> lists = new List<Vector3>();
                 generator.Test(x, y, z, new Vector3((float)width / 2.0f, (float)height / 2.0f, (float)length / 2.0f), voxelData, lists);
