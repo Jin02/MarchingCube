@@ -10,22 +10,26 @@ public class OcTree
         FrontTopLeft = 0, FrontTopRight, BackTopLeft, BackTopRight,
         FrontBottomLeft, FrontBottomRight, BackBottomLeft, BackBottomRight
     };
-
-	public int[] corner
+	
+    public OcTree parent
 	{
-		get
-		{
-			return corners;
-		}
+		get;
+		private set;
+	}
+	public int[]    corners {
+				get;
+				private set;
+	}
+    public Bounds   bounds
+	{
+		get;
+		private set;
 	}
 
-    private OcTree   parent   = null;
-    private int[]    corners   = new int[8]; // Enum.GetValues(typeof(Direction)).Length
-
-    private int      centerIndex;
-    private Bounds   bounds;
-
-    private OcTree[] childs   = new OcTree[8]; // Enum.GetValues(typeof(Direction)).Length
+    public OcTree[] childs {
+				get;
+				private set;
+	}
     public int depth
     {
         get;
@@ -43,19 +47,23 @@ public class OcTree
     public OcTree(OcTree parent)
     {
         this.parent = parent;
-        centerIndex = 0;
+		childs = new OcTree[8];
+		corners = new int[8];
 
-        for (int i = 0; i < 8; ++i)
+		for (int i = 0; i < 8; ++i)
         {
             childs[i] = null;
             corners[i] = 0;
         }
+
         depth = parent.depth + 1;
     }
 
     public OcTree(int w, int h, int l, Bounds bounds)
     {
-        //루트 노드
+		corners = new int[8];
+
+		//루트 노드
 		corners[(int)Direction.BackTopLeft] = 0;
 		corners[(int)Direction.BackTopRight] = w;
 		corners[(int)Direction.BackBottomLeft] = (w + 1) * l;
@@ -68,17 +76,9 @@ public class OcTree
 
         depth = 0;
 
-        //Debug.Log("depth : " + (depth) + " "
-        //    + "/ FTL " + corners[(int)Direction.FrontTopLeft]
-        //    + "/ FTR " + corners[(int)Direction.FrontTopRight]
-        //    + "/ BTL " + corners[(int)Direction.BackTopLeft]
-        //    + "/ BTR " + corners[(int)Direction.BackTopRight]
-        //    + "/ FBL " + corners[(int)Direction.FrontBottomLeft]
-        //    + "/ FBR " + corners[(int)Direction.FrontBottomRight]
-        //    + "/ BBL " + corners[(int)Direction.BackBottomLeft]
-        //    + "/ BBR " + corners[(int)Direction.BackBottomRight]);
-
         this.bounds = bounds;
+		this.parent = null;
+		childs   = new OcTree[8];
     }
     
     public void Build()
@@ -169,8 +169,6 @@ public class OcTree
         childCenter.y += d.y * offset.y;
         childCenter.z += d.z * offset.z;
 
-        //Debug.Log("depth : " + (depth + 1) + " / " + dir + "  //  " + d + "offset : " + offset + "cc : " + childCenter +"parent bounds " + bounds);
-
         bounds.center = childCenter;
 
         return bounds;
@@ -186,9 +184,17 @@ public class OcTree
 	{
 		int tableCount = (w + 1) * (l + 1);
 
-		z = idx / tableCount; // ㅇㅣㄱㅓㄴ ㅎㅗㅏㄱㅅㅣㄹ
+		z = (idx / tableCount);
+		if (z >= l)		z = l - 1;
+		else if (z < 0)	z = 0;
+
 		y = (h - 1) - (idx % tableCount) / (h + 1);
+		if (y >= h)		y = h - 1;
+		else if (y < 0)	y = 0;
+
 		x = (idx % tableCount) % (w + 1);
+		if (x >= w)		x = w - 1;
+		else if (x < 0)	x = 0;
 	}
 
     private bool SubDivide()
@@ -235,7 +241,7 @@ public class OcTree
         return true;
     }
 
-	public bool find(Ray ray, ref List<OcTree> nodeList, ref List<float> distList, int w, int h, int l)
+	public bool find(Ray ray, ref List<OcTree> nodeList, ref List<float> distList, int w, int h, int l, float[,,] densitys)
 	{
 		bool find = false;
 		if (bounds.IntersectRay (ray))
@@ -244,24 +250,22 @@ public class OcTree
 			{
 				find = true;
 
-				Debug.Log(bounds + "  /  isMinimum  " + isMinimum + "  corners " +
-				          "FTL " +corners[0] + " / "+ 
-				          "FTR " +corners[1] + " / "+ 
-				          "BTL " +corners[2] + " / "+ 
-				          "BTR " +corners[3] + " / "+
-				          "FBL " +corners[4] + " / "+ 
-				          "FBR " +corners[5] + " / "+ 
-				          "BBL " +corners[6] + " / "+ 
-				          "BBR " +corners[7] + " / ");
+				//Debug.Log(bounds);
+				bool isOutRange = false;
 
+				for(int i=0; i<8; ++i)
+				{
+					int x, y, z;
+					Calc3rdDimIdx(corners[i], w, h, l, out x, out y, out z);
 
+					if( ( (x+1) > w) && ( (y+1) > h) && ( (z+1) > l) )
+					{
+						isOutRange = true;
+						break;
+					}
+				}
 
-				int x, y, z;
-				Calc3rdDimIdx(corners[2], w, h, l, out x, out y, out z);
-
-				if( (x < (w-2)) &&
-				    (y < (h-2)) && 
-				    (z < (l-2)) )
+				if( isOutRange == false )
 				{
 					nodeList.Add(this);
 					distList.Add(Vector3.Distance(Camera.main.transform.localPosition, bounds.center));
@@ -271,28 +275,28 @@ public class OcTree
 			{
 				for(int i=0; i<8; ++i)
 				{
-
-
-					find = childs[i].find(ray, ref nodeList, ref distList, w, h, l);
+					if(CheckCornerInRange(densitys, w, h, l) )
+					{
+						find = childs[i].find(ray, ref nodeList, ref distList, w, h, l, densitys);
+					}
 				}
 			}
-
-
-		}
-		else
-		{
-//			if(isMinimum)
-//				Debug.Log(bounds + "  /  isMinimum  " + isMinimum + "  corners " +
-//				          "FTL " +corners[0] + " / "+ 
-//				          "FTR " +corners[1] + " / "+ 
-//				          "BTL " +corners[2] + " / "+ 
-//				          "BTR " +corners[3] + " / "+
-//				          "FBL " +corners[4] + " / "+ 
-//				          "FBR " +corners[5] + " / "+ 
-//				          "BBL " +corners[6] + " / "+ 
-//				          "BBR " +corners[7] + " / ");
 		}
 
 		return find;
+	}
+
+	bool CheckCornerInRange(float[,,] densitys, int w, int h, int l)
+	{
+		for (int i=0; i<8; ++i)
+		{
+			int x, y, z;
+			Calc3rdDimIdx(corners[i], w, h, l, out x, out y, out z);
+
+			if( x < w && y < h && z < l)
+				return true;
+		}
+
+		return false;
 	}
 }

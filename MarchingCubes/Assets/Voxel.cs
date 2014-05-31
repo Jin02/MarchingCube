@@ -23,7 +23,6 @@ public class Voxel : MonoBehaviour
     void Start()
     {
 		generator = new MarchingCubes();
-//		MarchingTetrahedra generator = new MarchingTetrahedra();
 
 		generator.densityTarget = 0.0f;
 		voxelData = new float[width, height, length];
@@ -38,16 +37,10 @@ public class Voxel : MonoBehaviour
 					float _y = (float)y - (float)height / 2.0f;
 					float _z = (float)z - (float)length / 2.0f;
 
-					//max((y*y-1),(x*x-1),(z*z-1)) 
                     voxelData[x, y, z] = _x * _x + _y * _y + _z * _z - radius * radius;
 					float _maxXY = Mathf.Max(_x*_x-1, _y*_y-1);
 					float _maxXYZ = Mathf.Max(_maxXY, _z*_z-1);
 					//voxelData[x, y, z] = _maxXYZ;
-
-					//if(voxelData[x,y,z] == 0)
-					{
-//						Debug.Log("x : "+x+" y : "+y+" z : "+z+" Voxel Data : "+voxelData[x,y,z]);
-					}
                 }
             }
         }
@@ -94,10 +87,9 @@ public class Voxel : MonoBehaviour
 		}
 		if (Input.GetMouseButtonDown (0))
 		{
-//			Debug.Log(Input.mousePosition);
 			List<OcTree> nodeList = new List<OcTree>();
 			List<float> dist = new List<float>();
-			octree.find( Camera.main.ScreenPointToRay(Input.mousePosition), ref nodeList, ref dist, _w, _h, _l );
+			octree.find( Camera.main.ScreenPointToRay(Input.mousePosition), ref nodeList, ref dist, _w, _h, _l, voxelData );
 
 			int si = 0;
 			float sd = 1000000000;
@@ -107,34 +99,28 @@ public class Voxel : MonoBehaviour
 			{
 				if(sd > dist[i])
 				{
-					sd = dist[i];
-					si = i;
-					find = true;
+					for(int j=0; j<8; ++j)
+					{
+						int x, y, z;
+						OcTree.Calc3rdDimIdx( nodeList[i].corners[j], _w, _h, _l, out x, out y, out z);
+						if( voxelData[x, y, z] < 0.0f )
+						{
+							sd = dist[i];
+							si = i;
+							find = true;
+							break;
+						}
+					}
 				}
 			}
-
-			Debug.Log("si : "+si+" sd : "+sd);
-
-//			int x, y, z;
-//			OcTree.Calc3rdDimIdx(idxs[si], 4, 4, 4, out x, out y, out z);
-//
-//			List<Vector3> lists = new List<Vector3>();
-//			generator.Test(x,y,z, new Vector3 ((float)width / 2.0f, (float)height / 2.0f, (float)length / 2.0f), voxelData, lists);
-//
-//			for(int i=0; i<lists.Count; ++i)
-//			{
-//				GameObject newObj = Instantiate(cubeObj) as GameObject;
-//				newObj.transform.localPosition = lists[i];
-//				newObj.transform.parent = temp.transform;
-//			}
-
+		
 			if( find == false )
 				return;
 
 			for(int i=0; i<8; ++i)
 			{
 				int x, y, z;
-				OcTree.Calc3rdDimIdx(nodeList[si].corner[i], _w, _h, _l, out x, out y, out z);
+				OcTree.Calc3rdDimIdx(nodeList[si].corners[i], _w, _h, _l, out x, out y, out z);
 				
 				List<Vector3> lists = new List<Vector3>();
 				generator.Test(x,y,z, new Vector3 ((float)width / 2.0f, (float)height / 2.0f, (float)length / 2.0f), voxelData, lists);

@@ -65,17 +65,8 @@ public class MarchingCubes
 
                     int edgeFlags = cubeEdgeFlags[flagIndex];
 
-					if( x == 3 && y == 2 && z == 2  )
-					{
-						//Debug.Log("x :"+x+" y : "+y+ " z : "+z+"  edgeFlag : "+edgeFlags);
-					}
-
-//					Debug.Log("x :"+x+" y : "+y+ " z : "+z+"  edgeFlag : "+edgeFlags);
-
                     if (edgeFlags == 0)
                         continue;
-
-
 
                     for (int i = 0; i < 12; i++)
                     {
@@ -93,9 +84,6 @@ public class MarchingCubes
 								+ (vertexOffset[edgeConnection[i, 0], 2] + offsetInCube * edgeDirection[i, 2]);
                         }
                     }
-
-//					if (triangleConnectionTable[flagIndex, 3] >= 0 && (x == 1 && y == 3 && z == 3) )
-//						Debug.Log("x :"+x+" y : "+y+ " z : "+z+"  edgeFlag : "+edgeFlags);
 
                     for (int i = 0; i < 5; i++)
                     {
@@ -195,13 +183,10 @@ public class MarchingCubes
 
     static void FillCube(int x, int y, int z, float[, ,] voxels, ref float[] cube)
     {
-		if (x >= voxels.GetLength (0))
-						return;
-		if (y >= voxels.GetLength (1))
-						return;
-		if (z >= voxels.GetLength (2))
-						return;
-
+		if (x >= ( voxels.GetLength(0)-1 ) ||
+		    y >= ( voxels.GetLength(1)-1 ) ||
+		    z >= ( voxels.GetLength(2)-1 ) )
+			return;
 
         for (int i = 0; i < 8; i++)
 		{
@@ -567,3 +552,4 @@ public class MarchingCubes
 	    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
 	};
 }
+

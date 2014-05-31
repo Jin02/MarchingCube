@@ -1,21 +1,39 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/OcTree.cs">
     <Files>
-      <File FileName="Assets/OcTree.cs" Line="247" Column="5" />
-      <File FileName="Assets/Voxel.cs" Line="79" Column="32" />
+      <File FileName="Assets/Voxel.cs" Line="105" Column="18" />
+      <File FileName="Assets/Voxel.cs" Line="138" Column="1" />
+      <File FileName="Assets/OcTree.cs" Line="181" Column="25" />
+      <File FileName="Assets/MarchingCubes.cs" Line="197" Column="1" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>this.bounds</Value>
-          <Value>this</Value>
+          <Value>_x</Value>
+          <Value>_y</Value>
+          <Value>_z</Value>
+          <Value>corners</Value>
+          <Value>bounds</Value>
+          <Value>isMinimum</Value>
+          <Value>voxels</Value>
+          <Value>octree</Value>
+          <Value>x</Value>
+          <Value>y</Value>
+          <Value>z</Value>
+          <Value>densitys[x,y,z] </Value>
+          <Value>childCenter</Value>
+          <Value>d.x</Value>
+          <Value>offset</Value>
+          <Value>nodeList[0]</Value>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/jin/Project/Unity/MarchingCube/MarchingCubes/Assets/Voxel.cs" line="106" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
