@@ -1,11 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/OcTree.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Voxel.cs">
     <Files>
-      <File FileName="Assets/Voxel.cs" Line="105" Column="18" />
-      <File FileName="Assets/Voxel.cs" Line="138" Column="1" />
-      <File FileName="Assets/OcTree.cs" Line="181" Column="25" />
-      <File FileName="Assets/MarchingCubes.cs" Line="197" Column="1" />
+      <File FileName="Assets/Voxel.cs" Line="88" Column="6" />
+      <File FileName="Assets/GetDepthBuffer.cs" Line="8" Column="30" />
+      <File FileName="Assets/MarchingCubes.cs" Line="118" Column="5" />
+      <File FileName="Assets/OcTree.cs" Line="265" Column="22" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
@@ -31,9 +31,7 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/jin/Project/Unity/MarchingCube/MarchingCubes/Assets/Voxel.cs" line="106" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
