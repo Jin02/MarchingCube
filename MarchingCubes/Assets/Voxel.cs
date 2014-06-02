@@ -67,7 +67,9 @@ public class Voxel : MonoBehaviour
     }
 
     public Object cubeObj;
-    public GameObject temp;
+	public Object cubeObj2;
+
+	public GameObject temp;
 
 	bool PickingTestOne()	
 	{
@@ -109,30 +111,31 @@ public class Voxel : MonoBehaviour
 			
 			List<Vector3> lists = new List<Vector3>();
 			generator.Test(x, y, z, new Vector3((float)width / 2.0f, (float)height / 2.0f, (float)length / 2.0f), voxelData, lists);
-			
+
+			//Bugㅇㅣㅆㅇ...
 			for(int h=0; h<lists.Count; h+=3)
 			{
 				float u, v, t;
 				if(IntersectTriangle(ray, lists[h+0], lists[h+1], lists[h+2], out u, out v, out t))
 				{
-//					Debug.Log("Check");
-//					Vector3 pos = lists[h] 	+ u * (lists[h+1] - lists[h]) 
-//						+ v * (lists[h+2] - lists[h]); 
-//					
-//					GameObject newObj = Instantiate(cubeObj) as GameObject;
-//					newObj.transform.localPosition = pos;
-//					newObj.transform.parent = temp.transform;
+					Debug.Log("Check");
+					Vector3 pos = lists[h] 	+ u * (lists[h+1] - lists[h]) 
+											+ v * (lists[h+2] - lists[h]); 
 					
-					return true;
+					GameObject newObj = Instantiate(cubeObj2) as GameObject;
+					newObj.transform.localPosition = pos;
+					newObj.transform.parent = temp.transform;
+					break;
 				}
 			}
-			
-//			for (int h = 0; h < lists.Count; ++h)
-//			{
-//				GameObject newObj = Instantiate(cubeObj) as GameObject;
-//				newObj.transform.localPosition = lists[h];
-//				newObj.transform.parent = temp.transform;
-//			}
+
+			//Bug..
+			for (int h = 0; h < lists.Count; ++h)
+			{
+				GameObject newObj = Instantiate(cubeObj) as GameObject;
+				newObj.transform.localPosition = lists[h];
+				newObj.transform.parent = temp.transform;
+			}
 		}
 
 		return false;
@@ -164,21 +167,13 @@ public class Voxel : MonoBehaviour
 	
 	void Update()
 	{
-		float beforeTime = Time.time;
-
 		if (Input.GetMouseButtonDown(1))
 		{
-			for(int i=0; i<1000; ++i)
-				PickingTestTwo();
 
-			Debug.Log(Time.time - beforeTime);
 		}
 		if (Input.GetMouseButtonDown(0))
 		{
-			for(int i=0; i<1000; ++i)
-				PickingTestOne();
-
-			Debug.Log(Time.time - beforeTime);
+			PickingTestOne();
 		}
 	}
 	

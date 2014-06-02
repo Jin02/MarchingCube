@@ -95,7 +95,7 @@ public class MarchingCubes
 
                             Vector3 p = edgeVertex[vertexIndex];
                             System.Int64 hashCode = CalcHash(p);
-
+							int count;
                             if (hash.ContainsKey(hashCode) == false)
                             {
                                 hash.Add(hashCode, index);
@@ -108,6 +108,9 @@ public class MarchingCubes
                                 indexList.Add(beforeIdx);
                             }
 
+//							count = hash.Count;
+//							if(count != 0)
+//								Debug.Log(count);
                         }
                     }
                 }
