@@ -11,15 +11,14 @@ public class MarchingCubes
             return target;
         }
     }
-    private float target;	// isosurface 밀도 기준 변수 입니다. 0.0이 보통 입니다.
+    private float target;
 
     public MarchingCubes(float densityTarget)
     {
         target = 0.0f;
     }
 
-    //densitys = isosurfaces values
-    public Mesh CreateMesh(float[, ,] densitys, Vector3 offset) 
+    public Mesh CreateMesh(float[, ,] densitys, Vector3 offset)
     {
         List<Vector3> vertexs = null;
         List<int> indices = null;
@@ -33,7 +32,6 @@ public class MarchingCubes
         return mesh;
     }
 
-    //densitys = isosurfaces values
     void CalcMarchingCube(float[, ,] densitys, Vector3 offset, out List<Vector3> vertexList, out List<int> indexList)
     {
         vertexList = new List<Vector3>();
@@ -56,30 +54,23 @@ public class MarchingCubes
                     Vector3[] edgeVertex = new Vector3[12];
                     float[] cube = new float[8];
 
-		    // cube[]의 내용을 isosurface 값으로 채웁니다.
                     FillCube(x, y, z, densitys, ref cube);
 
                     for (int i = 0; i < 8; i++)
                     {
-                    	//target = 0
                         if (cube[i] > target)
                             flagIndex |= 1 << i;
                     }
 
-		    // 보고서 Fig. 3. 참고. 어떤 종류의 마칭 큐브를 만들지 정함
                     int edgeFlags = cubeEdgeFlags[flagIndex];
 
-		    // 폴리곤 생성 할 필요 없음.
                     if (edgeFlags == 0)
                         continue;
 
                     for (int i = 0; i < 12; i++)
                     {
-                    	// 모양 플래그에 맞춰 큐브 내 버텍스 계산
                         if ((edgeFlags & (1 << i)) != 0)
                         {
-                            //적당히 보간 함.
-                            //(target - cube[edgeConnection[i, 0]]) / (cube[edgeConnection[i, 1]] - cube[edgeConnection[i, 0]])
                             float offsetInCube = GetOffset(cube[edgeConnection[i, 0]], cube[edgeConnection[i, 1]]);
 
                             edgeVertex[i].x = (float)x - offset.x
@@ -95,7 +86,6 @@ public class MarchingCubes
 
                     for (int i = 0; i < 5; i++)
                     {
-                    	// -1은 삼각형 없음
                         if (triangleConnectionTable[flagIndex, 3 * i] < 0)
                             break;
 
@@ -103,24 +93,24 @@ public class MarchingCubes
                         {
                             int vertexIndex = triangleConnectionTable[flagIndex, 3 * i + j];
 
-			    //인덱스 값에 다라, 버텍스 값 받아옴
                             Vector3 p = edgeVertex[vertexIndex];
-                            
-                            // 키 생성
                             System.Int64 hashCode = CalcHash(p);
-
-			    // 버텍스 중복되지 않은 경우,
+							int count;
                             if (hash.ContainsKey(hashCode) == false)
                             {
                                 hash.Add(hashCode, index);
                                 indexList.Add(index++);
                                 vertexList.Add(p);
                             }
-                            else // 중복
+                            else
                             {
                                 int beforeIdx = (int)hash[hashCode];
                                 indexList.Add(beforeIdx);
                             }
+
+//							count = hash.Count;
+//							if(count != 0)
+//								Debug.Log(count);
                         }
                     }
                 }
@@ -128,10 +118,8 @@ public class MarchingCubes
         }
     }
 
-    //지정된 위치의 버텍스 위치를 반환하는 함수
     public void Test(int x, int y, int z, Vector3 offset, float[, ,] densitys, List<Vector3> lists)
     {
-    	//위의 마칭 큐브 함수와 동일
         float[] cube = new float[8];
         FillCube(x, y, z, densitys, ref cube);
         int flagIndex = 0;
@@ -174,8 +162,6 @@ public class MarchingCubes
             {
                 int vertexIndex = triangleConnectionTable[flagIndex, 3 * i + j];
                 Vector3 p = edgeVertex[vertexIndex];
-                
-                //삼각형 검출에 사용하므로, 인덱스 말고 그냥 위치만 넘김
                 lists.Add(p);
             }
         }
@@ -183,12 +169,9 @@ public class MarchingCubes
 
     System.Int64 CalcHash(Vector3 v)
     {
-    	// float 형태의 값을 키 값으로 뽑을 때, 충돌되는게 너무 많아서 In64로 사용
-    	
         System.Int64 result = v.x.GetHashCode();
         result = (result * (System.Int64)0x1000) ^ (System.Int64)v.y.GetHashCode();
         result = (result * (System.Int64)0x1000) ^ (System.Int64)v.z.GetHashCode();
-
         return result;
     }
 

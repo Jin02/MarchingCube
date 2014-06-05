@@ -66,7 +66,6 @@ public class OcTree
         corners = new int[8];
 
         //루트 노드
-        //int 값 하나로 그냥 모든 코너 값 세팅
         corners[(int)Direction.BackTopLeft] = 0;
         corners[(int)Direction.BackTopRight] = w;
         corners[(int)Direction.BackBottomLeft] = (w + 1) * l;
@@ -138,9 +137,6 @@ public class OcTree
 
     private Bounds CalcBounds(Direction dir)
     {
-        //Bound 계산 함수
-        //코너 값에 따라 위치세팅. 사이즈는 그냥 현재 노드 값 나눠서 씀
-
         Bounds bounds = new Bounds();
         bounds.size = this.bounds.size / 2.0f;
 
@@ -154,6 +150,11 @@ public class OcTree
 
         //FrontTopLeft = 0, FrontTopRight, BackTopLeft, BackTopRight,
         //FrontBottomLeft, FrontBottomRight, BackBottomLeft, BackBottomRight
+
+        if (corners[0] == 149)
+        {
+            Debug.Log("Thing");
+        }
 
         //Top이면, 1, Bot이면 -1
         if ((int)dir / 4 == 0) d.y = 1.0f;
@@ -184,38 +185,25 @@ public class OcTree
 
     public static void Calc3rdDimIdx(int idx, int w, int h, int l, out int x, out int y, out int z)
     {
-        // Decode idx
-        // 코너 값을 3차원 상 인덱스 값으로 다시 구해줌
-        
         int tableCount = (w + 1) * (l + 1);
 
         z = (idx / tableCount);
-        
-        // 범위 넘으면 그냥 강제 세팅
         if (z >= l) z = l - 1;
         else if (z < 0) z = 0;
 
         y = (h - 1) - (idx % tableCount) / (h + 1);
-
-        // 범위 넘으면 그냥 강제 세팅
         if (y >= h) y = h - 1;
         else if (y < 0) y = 0;
 
         x = (idx % tableCount) % (w + 1);
-
-        // 범위 넘으면 그냥 강제 세팅
         if (x >= w) x = w - 1;
         else if (x < 0) x = 0;
     }
 
     private bool SubDivide()
     {
-        //막상 복잡해 보이기는 하는데,
-        //그냥 8개 코너 값을 잡고 반 씩 나누면서 공간 재 세팅하는 작업.
-        //변수명을 읽어보시면 편합니다.
-        
         if (isMinimum)
-            return false;
+            return true;
 
         int frontTopMid = (corners[(int)Direction.FrontTopLeft] + corners[(int)Direction.FrontTopRight]) / 2;
         int backTopMid = (corners[(int)Direction.BackTopLeft] + corners[(int)Direction.BackTopRight]) / 2;
@@ -271,7 +259,6 @@ public class OcTree
                 for (int i = 0; i < 8; ++i)
                 {
                     int x, y, z;
-                    //Decode corners[i] to xyz
                     Calc3rdDimIdx(corners[i], w, h, l, out x, out y, out z);
 
                     if (((x + 1) > w) && ((y + 1) > h) && ((z + 1) > l))
@@ -283,7 +270,6 @@ public class OcTree
 
                 if (isOutRange == false)
                 {
-                    //찾음
                     nodeList.Add(this);
                     distList.Add(Vector3.Distance(Camera.main.transform.localPosition, bounds.center));
                 }
@@ -294,7 +280,6 @@ public class OcTree
                 {
                     if (CheckCornerInRange(densitys, w, h, l))
                     {
-                        //자식들 검사.
                         find = childs[i].find(ray, ref nodeList, ref distList, w, h, l, densitys);
                     }
                 }
@@ -306,7 +291,6 @@ public class OcTree
 
     bool CheckCornerInRange(float[, ,] densitys, int w, int h, int l)
     {
-        //현재 노드의 코너 값들이 범위 안에 있는지 체크
         for (int i = 0; i < 8; ++i)
         {
             int x, y, z;
