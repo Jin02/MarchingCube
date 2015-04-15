@@ -9,9 +9,9 @@ public class GetDepthBuffer : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () {
-		camera.depthTextureMode = DepthTextureMode.Depth;
-		output = RenderTexture.GetTemporary ((int)camera.pixelWidth,
-		                                     (int)camera.pixelHeight,
+		GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
+		output = RenderTexture.GetTemporary ((int)GetComponent<Camera>().pixelWidth,
+		                                     (int)GetComponent<Camera>().pixelHeight,
 		                                     24,
 		                                    RenderTextureFormat.ARGB32);
 	}
@@ -23,18 +23,18 @@ public class GetDepthBuffer : MonoBehaviour
 		{
 			shaderCam = new GameObject("ShaderCam");
 			shaderCam.AddComponent<Camera>();
-			shaderCam.camera.enabled = false;
+			shaderCam.GetComponent<Camera>().enabled = false;
 			shaderCam.hideFlags = HideFlags.HideAndDontSave;
-			shaderCam.camera.depthTextureMode = DepthTextureMode.Depth;
+			shaderCam.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
 		}
 
-		Camera cam = shaderCam.camera;
-		cam.CopyFrom(camera);
+		Camera cam = shaderCam.GetComponent<Camera>();
+		cam.CopyFrom(GetComponent<Camera>());
 		cam.backgroundColor = Color.white;
 		cam.clearFlags = CameraClearFlags.SolidColor;
 		cam.RenderWithShader(shader, "RenderType");
 
-		camera.targetTexture = output;
+		GetComponent<Camera>().targetTexture = output;
 	}
 
 	void OnDisable()

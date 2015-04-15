@@ -24,6 +24,7 @@ public class Voxel : MonoBehaviour
     {
         generator = new MarchingCubes(0.0f);
         voxelData = new float[width, height, length];
+		CustomPerlinNoise noise = new CustomPerlinNoise (0xee, 16, 0.5f, 4.0f, new Vector3 (width, height, length));
 
         for (int x = 0; x < width; x++)
         {
@@ -35,7 +36,8 @@ public class Voxel : MonoBehaviour
                     float _y = (float)y - (float)height / 2.0f;
                     float _z = (float)z - (float)length / 2.0f;
 
-                    voxelData[x, y, z] = _x * _x + _y * _y + _z * _z - radius * radius;
+                    //voxelData[x, y, z] = _x * _x + _y * _y + _z * _z - radius * radius;
+					voxelData[x, y, z] = noise.Get(x, y, z);
                 }
             }
         }
@@ -48,7 +50,7 @@ public class Voxel : MonoBehaviour
         GameObject child = new GameObject("0");
         child.AddComponent<MeshFilter>();
         child.AddComponent<MeshRenderer>();
-        child.renderer.materials = new Material[]
+        child.GetComponent<Renderer>().materials = new Material[]
 		{
 			material
 		};
