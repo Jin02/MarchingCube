@@ -10,7 +10,10 @@ public class Voxel : MonoBehaviour
     public int height = 32;
     public int length = 32;
 
-    public float radius = 16.0f;
+    public float persistence = 0.5f;
+	public uint seed = 0xEE;
+	public uint octave = 16;
+	public float frequency = 4.0f;
 
     public Vector3 scale = new Vector3(1, 1, 1);
 
@@ -24,7 +27,7 @@ public class Voxel : MonoBehaviour
     {
         generator = new MarchingCubes(0.0f);
         voxelData = new float[width, height, length];
-		CustomPerlinNoise noise = new CustomPerlinNoise (0xee, 16, 0.5f, 4.0f, new Vector3 (width, height, length));
+		CustomPerlinNoise noise = new CustomPerlinNoise (seed, octave, persistence, frequency, new Vector3 (width, height, length));
 
         for (int x = 0; x < width; x++)
         {
@@ -37,7 +40,7 @@ public class Voxel : MonoBehaviour
                     float _z = (float)z - (float)length / 2.0f;
 
                     //voxelData[x, y, z] = _x * _x + _y * _y + _z * _z - radius * radius;
-					voxelData[x, y, z] = noise.Get(x, y, z);
+					voxelData[x, y, z] = noise.Get(x, y, z) + (noise.Get(x, y, z) * 0.5f) + (noise.Get(x, y, z) * 0.25f) + (noise.Get(x, y, z) * 0.125f);
                 }
             }
         }
