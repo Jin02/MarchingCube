@@ -1,7 +1,6 @@
 MarchingCube
 ============
-<img src="http://cfile22.uf.tistory.com/image/227BEA34537F8F2C24C8FC" />
-<p>Algorithm Term Project</p>
+<a href="http://imgur.com/mm4QzPC"><img src="http://i.imgur.com/mm4QzPC.png" title="source: imgur.com" /></a>
 
-<br>
-reference : http://scrawkblog.com/2013/04/01/marching-cubes-pl
+<p>Unity, Marching Cube With Perlin Noise</p>
+<p>on CPU</p>
